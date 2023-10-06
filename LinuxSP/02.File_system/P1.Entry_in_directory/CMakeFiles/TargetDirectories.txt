@@ -1,0 +1,6 @@
+/home/lou/Gemtek-training/LinuxSP/02.File_system/P1/CMakeFiles/my_app.dir
+/home/lou/Gemtek-training/LinuxSP/02.File_system/P1/CMakeFiles/run.dir
+/home/lou/Gemtek-training/LinuxSP/02.File_system/P1/CMakeFiles/debug_gdb.dir
+/home/lou/Gemtek-training/LinuxSP/02.File_system/P1/CMakeFiles/debug_mem.dir
+/home/lou/Gemtek-training/LinuxSP/02.File_system/P1/CMakeFiles/edit_cache.dir
+/home/lou/Gemtek-training/LinuxSP/02.File_system/P1/CMakeFiles/rebuild_cache.dir

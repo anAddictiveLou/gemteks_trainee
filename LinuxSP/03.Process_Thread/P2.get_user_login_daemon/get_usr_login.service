@@ -1,0 +1,11 @@
+[Unit]
+Description=Get login service
+After=network.target
+
+[Service]
+ExecStart=/usr/sbin/get_usr_login
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
