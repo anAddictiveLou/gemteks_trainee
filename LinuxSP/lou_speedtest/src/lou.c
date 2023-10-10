@@ -265,15 +265,20 @@ int get_best_server(server_data_t *nearest_servers) {
     }
 
     //Select low latency server
-    for(i=0; i<NEAREST_SERVERS_NUM; i++) {
-        if(i == 0) {
-            best_index = i;
-            latency = nearest_servers[i].latency;
-        } else {
-            if(nearest_servers[i].latency < latency && nearest_servers[i].latency != -1) {
+    for(i=0; i<NEAREST_SERVERS_NUM - 1; i++) 
+    {
+        printf("latency of %d server = %d\n", i, nearest_servers[i].latency);
+        if (nearest_servers[i].latency != -1)
+        {
+            if (nearest_servers[i].latency < nearest_servers[i+1].latency)
+            {
                 best_index = i;
-                latency = nearest_servers[i].latency;
-            }           
+            }
+        }
+        else
+        {
+            if (nearest_servers[i+1].latency != -1)
+                best_index = i+1;
         }
     }
     return best_index;

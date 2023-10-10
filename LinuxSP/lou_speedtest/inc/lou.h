@@ -21,7 +21,7 @@
 #define SERVERS_LOCATION_REQUEST_URL "speedtest-servers-static.php?"    // nearly server for speedtest
 
 #define FILE_DIRECTORY_PATH "/tmp/"
-#define NEAREST_SERVERS_NUM 7
+#define NEAREST_SERVERS_NUM 5s
 #define THREAD_NUMBER 4
 #define SPEEDTEST_DURATION 5
 

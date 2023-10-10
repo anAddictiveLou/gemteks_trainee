@@ -53,14 +53,13 @@ int main() {
         printf("Distance: %lf (km)\n", nearest_servers[best_server_index].distance);
         printf("Latency: %d (us)\n", nearest_servers[best_server_index].latency);
         printf("===============================================\n");
-
         //Set speed test timer
         signal(SIGALRM, stop_all_thread);
         alarm(SPEEDTEST_DURATION);
         // timerVal.it_value.tv_sec = SPEEDTEST_DURATION;
         // timerVal.it_value.tv_usec = 0;
-        // setitimer(ITIMER_REAL, &timerVal, NULL);
-
+        // setitimer(ITIMER_REAL, &timerVal, NULL); 
+    
         pthread_create(&pid, NULL, calculate_dl_speed_thread, NULL);
         speedtest_download(&nearest_servers[best_server_index]);
 
@@ -73,6 +72,10 @@ int main() {
         pthread_create(&pid, NULL, calculate_ul_speed_thread, NULL);
         speedtest_upload(&nearest_servers[best_server_index]);
         printf("\n");
+    }
+    else 
+    {
+        printf("All server can not run speedtest\n");
     }
     return 0;
 }
