@@ -59,5 +59,26 @@ typedef struct thread {
     struct sockaddr_in servinfo;
 } thread_t;
 
+extern float start_dl_time;
+extern float stop_dl_time;
+extern float start_ul_time;
+extern float stop_ul_time;
+extern int thread_all_stop;
+extern long int total_dl_size;
+extern long int total_ul_size;
+
+extern pthread_mutex_t pthread_mutex; 
+extern thread_t thread[THREAD_NUMBER];
+
+
+float get_uptime(void);
+int get_ipv4_addr(char *domain_name, struct sockaddr_in *servinfo);
+int get_http_file(struct sockaddr_in *serv, char *domain_name, char *request_url, char *filename);
+int get_ip_address_position(char *fileName, client_data_t *client_data);
+double calcDistance(double lat1, double lon1, double lat2, double lon2);
+int get_nearest_server(double lat_c, double lon_c, server_data_t *nearest_servers);
+int get_best_server(server_data_t *nearest_servers);
+
+
 
 #endif

@@ -1,14 +1,13 @@
 CC = gcc
-INC = -I./inc
+INC = -I./inc ./main.h
 SRC = ./src/*.c
+FLAG = -lm -lpthread 
+BIN = ./bin/speedtest
 
-all: run
-
-run: main
-	./main
+all: main
 
 main: main.c $(SRC)
-	$(CC) $(INC) main.c $(SRC) -o main
+	$(CC) $(INC) main.c $(SRC) -o $(BIN) $(FLAG)
 
 debug_memory: main.c $(SRC)
 	$(CC) $(INC) main.c $(SRC) -std=c11 -lm -o debug
@@ -20,5 +19,8 @@ debug_gdb: main.c $(SRC)
 	gdb ./gdb_debug
 	rm -rf gdb_debug
 
+run:
+	$(BIN)
+
 clean:
-	rm -rf main
+	rm -rf $(BIN)
