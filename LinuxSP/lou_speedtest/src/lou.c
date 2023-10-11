@@ -48,8 +48,9 @@ int get_http_file(struct sockaddr_in *serv, char *domain_name, char *request_url
         if(fd) close(fd);
         return 0;
     }
+
     if(connect(fd, (struct sockaddr *)serv, sizeof(struct sockaddr)) == -1) {
-        perror("Socket connect error!\n");
+        printf("Create connection to %s failed!\n", domain_name);
         if(fd) close(fd);
         return 0;
     }
@@ -246,7 +247,11 @@ int get_best_server(server_data_t *nearest_servers) {
 
             //Get latency time
             gettimeofday(&tv1, NULL);
-            get_http_file(&servinfo, nearest_servers[i].domain_name, latency_request_url, latency_name);
+            if (get_http_file(&servinfo, nearest_servers[i].domain_name, latency_request_url, latency_name) == 0)
+            {
+                nearest_servers[i].latency = -1;
+                continue;
+            }
             gettimeofday(&tv2, NULL);
         }
 
@@ -263,22 +268,31 @@ int get_best_server(server_data_t *nearest_servers) {
             nearest_servers[i].latency = -1;
         }
     }
-
+    
     //Select low latency server
-    for(i=0; i<NEAREST_SERVERS_NUM - 1; i++) 
+    int min_latency = -1;
+    int fg = 0;
+    for(i=0; i<NEAREST_SERVERS_NUM; i++) 
     {
-        printf("latency of %d server = %d\n", i, nearest_servers[i].latency);
+        printf("latency of server %s = %d\n", nearest_servers[i].domain_name, nearest_servers[i].latency);
         if (nearest_servers[i].latency != -1)
         {
-            if (nearest_servers[i].latency < nearest_servers[i+1].latency)
+            if (fg == 0)
             {
+                min_latency = nearest_servers[i].latency;
                 best_index = i;
+                fg = 1;
+                //printf("idx = %d, latency = %d\n", i, min_latency);
             }
-        }
-        else
-        {
-            if (nearest_servers[i+1].latency != -1)
-                best_index = i+1;
+            else if (fg == 1)
+            {
+                //printf("best idx = %d, latency = %d\n", best_index, min_latency);
+                if (nearest_servers[i].latency < min_latency)
+                {
+                    min_latency = nearest_servers[i].latency;
+                    best_index = i;
+                }
+            }
         }
     }
     return best_index;

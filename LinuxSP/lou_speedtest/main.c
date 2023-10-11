@@ -34,25 +34,25 @@ int main() {
     }
 
     get_ip_address_position(CONFIG_REQUEST_URL, &client_data);
-    printf("============================================\n");
+    printf("\n\n============================================\n");
     printf("Your IP Address : %s\n", client_data.ipAddr);
     printf("Your IP Location: %0.4lf, %0.4lf\n", client_data.latitude, client_data.longitude);
     printf("Your ISP        : %s\n", client_data.isp);
-    printf("============================================\n");
-
+    printf("============================================\n\n");
+    
     if(get_nearest_server(client_data.latitude, client_data.longitude, nearest_servers)==0) {
         printf("Can't get server list.\n"); 
         return 0;
     }
     if((best_server_index = get_best_server(nearest_servers))!=-1) {
-        printf("==========The best server information==========\n");
+        printf("\n\n==========The best server information==========\n");
         printf("URL: %s\n", nearest_servers[best_server_index].url);
         printf("Latitude: %lf, Longitude: %lf\n", nearest_servers[best_server_index].latitude, nearest_servers[best_server_index].longitude);
         printf("Name: %s\n", nearest_servers[best_server_index].name);
         printf("Country: %s\n", nearest_servers[best_server_index].country);
         printf("Distance: %lf (km)\n", nearest_servers[best_server_index].distance);
         printf("Latency: %d (us)\n", nearest_servers[best_server_index].latency);
-        printf("===============================================\n");
+        printf("===============================================\n\n");
         //Set speed test timer
         signal(SIGALRM, stop_all_thread);
         alarm(SPEEDTEST_DURATION);
