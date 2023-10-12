@@ -35,6 +35,8 @@ int get_ipv4_addr(char *domain_name, struct sockaddr_in *servinfo) {
     return 1;
 }
 
+static int guard(int n, char * err) { if (n == -1) { perror(err); exit(1); } return n; }
+
 int get_http_file(struct sockaddr_in *serv, char *domain_name, char *request_url, char *filename) {
     int fd;
     char sbuf[256]={0}, tmp_path[128]={0};
@@ -43,23 +45,37 @@ int get_http_file(struct sockaddr_in *serv, char *domain_name, char *request_url
     fd_set fdSet;
     FILE *fp=NULL;
 
+
     if((fd = socket(serv->sin_family, SOCK_STREAM, 0)) == -1) {
         perror("Open socket error!\n");
         if(fd) close(fd);
         return 0;
     }
 
+    /* set socket to non-blocking */
+
+    struct timeval timeout;
+    timeout.tv_sec = TIMEOUT_CONNECT;
+    timeout.tv_usec = 0;
+    setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+    setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
     if(connect(fd, (struct sockaddr *)serv, sizeof(struct sockaddr)) == -1) {
-        printf("Create connection to %s failed!\n", domain_name);
-        if(fd) close(fd);
-        return 0;
+        if (errno != EINPROGRESS)
+        {
+            printf("\n\nCreate connection to %s failed!\n", domain_name);
+            perror("Error: ");
+            if(fd) close(fd);
+            return 0;
+        }
     }
 
     sprintf(sbuf,
             "GET /%s HTTP/1.0\r\n"
             "Host: %s\r\n"
             "User-Agent: status\r\n"
-            "Accept: */*\r\n\r\n", request_url, domain_name);                                                                 
+            "Accept: */*\r\n\r\n", request_url, domain_name);          
+
+    printf("get_http_file(): \n%s\n\n", sbuf);                                                       
 
     if(send(fd, sbuf, strlen(sbuf), 0) != strlen(sbuf)) {
         perror("Can't send data to server\n");
@@ -75,8 +91,7 @@ int get_http_file(struct sockaddr_in *serv, char *domain_name, char *request_url
         memset(rbuf, 0, sizeof(rbuf));
         FD_ZERO(&fdSet);
         FD_SET(fd, &fdSet);
-
-        tv.tv_sec = 3;
+        tv.tv_sec = 1;
         tv.tv_usec = 0;
         int status = select(fd + 1, &fdSet, NULL, NULL, &tv);
         int i = recv(fd, rbuf, sizeof(rbuf), 0);
@@ -229,7 +244,7 @@ int get_best_server(server_data_t *nearest_servers) {
             if(strstr(buf, "http:")) 
                 strcat(latency_url[i], "/");
 
-            ptr = strtok(NULL, "/");
+            ptr = strtok(NULL, "/"); 
         }
 
         //Get domain name

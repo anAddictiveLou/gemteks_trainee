@@ -5,6 +5,18 @@
         "usr.h": "c",
         "unistd.h": "c",
         "stdlib.h": "c",
-        "signal.h": "c"
-    }
+        "signal.h": "c",
+        "main.h": "c",
+        "lou.h": "c",
+        "pthread.h": "c",
+        "time.h": "c",
+        "types.h": "c",
+        "fcntl.h": "c",
+        "in.h": "c",
+        "netdb.h": "c",
+        "libhttp.h": "c",
+        "cerrno": "c",
+        "errno.h": "c"
+    },
+    "cmake.configureOnOpen": false
 }

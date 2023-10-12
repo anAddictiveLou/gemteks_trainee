@@ -12,7 +12,11 @@
 #include <signal.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include <fcntl.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <errno.h>
 
 #define SPEEDTEST_DOMAIN_NAME "www.speedtest.net"
 #define CONFIG_REQUEST_URL "speedtest-config.php"   // host position url
@@ -21,13 +25,15 @@
 #define SERVERS_LOCATION_REQUEST_URL "speedtest-servers-static.php?"    // nearly server for speedtest
 
 #define FILE_DIRECTORY_PATH "/tmp/"
-#define NEAREST_SERVERS_NUM 5
+#define NEAREST_SERVERS_NUM 6
 #define THREAD_NUMBER 4
 #define SPEEDTEST_DURATION 5
 
 #define UL_BUFFER_SIZE 8192
 #define UL_BUFFER_TIMES 10240
 #define DL_BUFFER_SIZE 8192
+
+#define TIMEOUT_CONNECT 1
 
 
 typedef struct client_data {

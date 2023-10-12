@@ -1,1 +1,0 @@
-# Problem 2. Write a daemon process to get the current user login. Configure the daemon process to start automatically at booting.
