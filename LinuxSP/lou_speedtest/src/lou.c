@@ -52,8 +52,7 @@ int get_http_file(struct sockaddr_in *serv, char *domain_name, char *request_url
         return 0;
     }
 
-    /* set socket to non-blocking */
-
+    /* set connect() time out */
     struct timeval timeout;
     timeout.tv_sec = TIMEOUT_CONNECT;
     timeout.tv_usec = 0;
@@ -62,23 +61,25 @@ int get_http_file(struct sockaddr_in *serv, char *domain_name, char *request_url
     if(connect(fd, (struct sockaddr *)serv, sizeof(struct sockaddr)) == -1) {
         if (errno != EINPROGRESS)
         {
-            printf("\n\nCreate connection to %s failed!\n", domain_name);
-            perror("Error: ");
+            /* lou debug */
+            //printf("\n\nCreate connection to %s failed!\n", domain_name);
+            //perror("Error: ");
             if(fd) close(fd);
             return 0;
         }
+        /* lou debug */
+        //printf("Trying connect to %s\n", domain_name);
     }
 
     sprintf(sbuf,
             "GET /%s HTTP/1.0\r\n"
             "Host: %s\r\n"
             "User-Agent: status\r\n"
-            "Accept: */*\r\n\r\n", request_url, domain_name);          
-
-    printf("get_http_file(): \n%s\n\n", sbuf);                                                       
+            "Accept: */*\r\n\r\n", request_url, domain_name);                                                          
 
     if(send(fd, sbuf, strlen(sbuf), 0) != strlen(sbuf)) {
-        perror("Can't send data to server\n");
+        /* lou debug */
+        //printf("Can't send data to %s\n", domain_name);
         if(fd) close(fd);
         return 0;
     }
@@ -289,7 +290,8 @@ int get_best_server(server_data_t *nearest_servers) {
     int fg = 0;
     for(i=0; i<NEAREST_SERVERS_NUM; i++) 
     {
-        printf("latency of server %s = %d\n", nearest_servers[i].domain_name, nearest_servers[i].latency);
+        /* lou debug */
+        //printf("latency of server %s = %d\n", nearest_servers[i].domain_name, nearest_servers[i].latency);
         if (nearest_servers[i].latency != -1)
         {
             if (fg == 0)
@@ -297,11 +299,9 @@ int get_best_server(server_data_t *nearest_servers) {
                 min_latency = nearest_servers[i].latency;
                 best_index = i;
                 fg = 1;
-                //printf("idx = %d, latency = %d\n", i, min_latency);
             }
             else if (fg == 1)
             {
-                //printf("best idx = %d, latency = %d\n", best_index, min_latency);
                 if (nearest_servers[i].latency < min_latency)
                 {
                     min_latency = nearest_servers[i].latency;
