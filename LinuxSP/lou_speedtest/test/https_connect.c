@@ -1,14 +1,3 @@
-#include "https.h"
-
-void https_init(void)
-{
-    SSL_library_init();
-    SSL_load_error_strings();
-    ERR_load_BIO_strings();
-    OpenSSL_add_ssl_algorithms();
-}
-
-
 /* ------------------------------------------------------------ *
  * file:        sslconnect.c                                    *
  * purpose:     Example code for building a SSL connection and  *
@@ -24,6 +13,7 @@ void https_init(void)
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <sys/select.h>
 #include <string.h>
 
 #include <openssl/bio.h>
@@ -39,9 +29,11 @@ void https_init(void)
  * ---------------------------------------------------------- */
 int create_socket(char[], BIO *);
 
-int main(char* dest_url) {
+void *download_thread(int , SSL*);
 
-  char           dest_url[] = "https:www.google.com";
+int main() {
+
+  char           dest_url[] = "https://hp2.mobifone.vn.prod.hosts.ooklaserver.net:8080";
   BIO              *certbio = NULL;
   BIO               *outbio = NULL;
   X509                *cert = NULL;
@@ -135,6 +127,9 @@ int main(char* dest_url) {
   X509_NAME_print_ex(outbio, certname, 0, 0);
   BIO_printf(outbio, "\n");
 
+  /* lou test */
+  download_thread(server, ssl);
+
   /* ---------------------------------------------------------- *
    * Free the structures we don't need anymore                  *
    * -----------------------------------------------------------*/
@@ -145,6 +140,37 @@ int main(char* dest_url) {
   BIO_printf(outbio, "Finished SSL/TLS connection with server: %s.\n", dest_url);
   return(0);
 }
+
+void *download_thread(int fd, SSL* ssl) {
+  char* request_url = "/download?nocache=b2d8ebb8-4ffd-4512-9032-e20375befb70&size=25000000&guid=3ea855c7-a129-40d5-bf3c-4f7cb1883e85";
+  char* request_url1 = "/hello?nocache=277b802d-0984-4ad4-8fbb-5a2daa1a05d1&guid=3ea855c7-a129-40d5-bf3c-4f7cb1883e85";
+  char* host = "hp2.mobifone.vn.prod.hosts.ooklaserver.net:8080";
+    char sbuf[256]={0}, rbuf[8192] = {0};
+    struct timeval tv;
+    fd_set fdSet;
+
+    sprintf(sbuf,
+            "GET /%s HTTP/1.1\r\n"
+            "Host: %s\r\n"
+            "User-Agent: status\r\n"
+            "Accept: */*\r\n\r\n", request_url, host);
+
+    
+
+    if(send(fd, sbuf, strlen(sbuf), 0) != strlen(sbuf)) {
+        perror("Can't send data to server\n");
+        goto err;
+    }
+
+    SSL_write(ssl, sbuf, strlen(sbuf)); 
+    int byte = SSL_read(ssl, rbuf, sizeof(rbuf)); /* get reply & decrypt */
+    printf("Received %d bytes: \"%s\"\n",byte , rbuf);
+
+err: 
+    if(fd) close(fd);
+    return NULL;
+}
+
 
 /* ---------------------------------------------------------- *
  * create_socket() creates the socket & TCP-connect to server *
@@ -169,12 +195,13 @@ int create_socket(char url_str[], BIO *out) {
    * the first : ends the protocol string, i.e. http            *
    * ---------------------------------------------------------- */
   strncpy(proto, url_str, (strchr(url_str, ':')-url_str));
+  printf("LOG: %s\n", proto);
 
   /* ---------------------------------------------------------- *
    * the hostname starts after the "://" part                   *
    * ---------------------------------------------------------- */
   strncpy(hostname, strstr(url_str, "://")+3, sizeof(hostname));
-
+  printf("LOG: %s\n", hostname);
   /* ---------------------------------------------------------- *
    * if the hostname contains a colon :, we got a port number   *
    * ---------------------------------------------------------- */
@@ -186,7 +213,8 @@ int create_socket(char url_str[], BIO *out) {
   }
 
   port = atoi(portnum);
-
+  printf("LOG: %s\n", hostname);
+  printf("LOG: %d\n", port);
   if ( (host = gethostbyname(hostname)) == NULL ) {
     BIO_printf(out, "Error: Cannot resolve hostname %s.\n",  hostname);
     abort();
@@ -207,6 +235,7 @@ int create_socket(char url_str[], BIO *out) {
   memset(&(dest_addr.sin_zero), '\0', 8);
 
   tmp_ptr = inet_ntoa(dest_addr.sin_addr);
+  printf("LOG: %s\n", tmp_ptr);
 
   /* ---------------------------------------------------------- *
    * Try to make the host connect here                          *

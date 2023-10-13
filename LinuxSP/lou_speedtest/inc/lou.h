@@ -18,6 +18,9 @@
 #include <netdb.h>
 #include <errno.h>
 
+#include "http.h"
+#include "https.h"
+
 #define SPEEDTEST_DOMAIN_NAME "www.speedtest.net"
 #define CONFIG_REQUEST_URL "speedtest-config.php"   // host position url
 
@@ -25,7 +28,7 @@
 #define SERVERS_LOCATION_REQUEST_URL "speedtest-servers-static.php?"    // nearly server for speedtest
 
 #define FILE_DIRECTORY_PATH "/tmp/"
-#define NEAREST_SERVERS_NUM 10
+#define NEAREST_SERVERS_NUM 20
 #define THREAD_NUMBER 4
 #define SPEEDTEST_DURATION 5
 
@@ -33,7 +36,8 @@
 #define UL_BUFFER_TIMES 10240
 #define DL_BUFFER_SIZE 8192
 
-#define TIMEOUT_CONNECT 1
+#define TIMEOUT_CONNECT_IN_SECOND 1
+#define TIMEOUT_CONNECT_IN_US 50000
 
 
 typedef struct client_data {
@@ -79,12 +83,10 @@ extern thread_t thread[THREAD_NUMBER];
 
 float get_uptime(void);
 int get_ipv4_addr(char *domain_name, struct sockaddr_in *servinfo);
-int get_http_file(struct sockaddr_in *serv, char *domain_name, char *request_url, char *filename);
 int get_ip_address_position(char *fileName, client_data_t *client_data);
 double calcDistance(double lat1, double lon1, double lat2, double lon2);
 int get_nearest_server(double lat_c, double lon_c, server_data_t *nearest_servers);
 int get_best_server(server_data_t *nearest_servers);
-
 
 
 #endif

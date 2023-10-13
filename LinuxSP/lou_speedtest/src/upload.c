@@ -8,7 +8,7 @@ void *calculate_ul_speed_thread() {
         //ul_speed = (double)total_ul_size/1024/1024/duration*8;
         ul_speed = (double)total_ul_size/1000/1000/duration*8;
         if(duration>0) {
-            printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bUpload speed: %0.2lf Mbps", ul_speed);
+            printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bUpload speed  : %0.2lf Mbps", ul_speed);
             fflush(stdout);
         }
         usleep(500000);
@@ -19,7 +19,7 @@ void *calculate_ul_speed_thread() {
             //ul_speed = (double)total_ul_size/1024/1024/duration*8;
             ul_speed = (double)total_ul_size/1000/1000/duration*8;
             if(duration) {
-                printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bUpload speed: %0.2lf Mbps", ul_speed);
+                printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bUpload speed  : %0.2lf Mbps", ul_speed);
                 fflush(stdout);
             }
             break;

@@ -1,7 +1,7 @@
 CC = gcc
 INC = -I./inc ./main.h
 SRC = ./src/*.c
-FLAG = -lm -lpthread 
+FLAG = -lm -lpthread -lssl -lcrypto
 BIN = ./bin/speedtest
 DB_GDB = ./bin/speedtest-gdbdebug
 

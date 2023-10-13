@@ -34,18 +34,19 @@ int main() {
     }
 
     get_ip_address_position(CONFIG_REQUEST_URL, &client_data);
-    printf("\n\n============================================\n");
+    printf("\n\n=================Where am I====================\n");
     printf("Your IP Address : %s\n", client_data.ipAddr);
     printf("Your IP Location: %0.4lf, %0.4lf\n", client_data.latitude, client_data.longitude);
     printf("Your ISP        : %s\n", client_data.isp);
-    printf("============================================\n\n");
+    printf("===============================================\n\n");
     
     if(get_nearest_server(client_data.latitude, client_data.longitude, nearest_servers)==0) {
         printf("Can't get server list.\n"); 
         return 0;
     }
+    printf("Chosing best server, please wait ....\n\n");
     if((best_server_index = get_best_server(nearest_servers))!=-1) {
-        printf("\n\n==========The best server information==========\n");
+        printf("==========The best server information==========\n");
         printf("URL: %s\n", nearest_servers[best_server_index].url);
         printf("Latitude: %lf, Longitude: %lf\n", nearest_servers[best_server_index].latitude, nearest_servers[best_server_index].longitude);
         printf("Name: %s\n", nearest_servers[best_server_index].name);
@@ -60,6 +61,7 @@ int main() {
         // timerVal.it_value.tv_usec = 0;
         // setitimer(ITIMER_REAL, &timerVal, NULL); 
     
+        printf("===============Speedtest result================\n");
         pthread_create(&pid, NULL, calculate_dl_speed_thread, NULL);
         speedtest_download(&nearest_servers[best_server_index]);
 
@@ -72,6 +74,7 @@ int main() {
         pthread_create(&pid, NULL, calculate_ul_speed_thread, NULL);
         speedtest_upload(&nearest_servers[best_server_index]);
         printf("\n");
+        printf("===============================================\n\n");
     }
     else 
     {
